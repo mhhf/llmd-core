@@ -64,26 +64,26 @@ SLIDE
     : MD NOTES_SEPERATOR OPT_NOTES
       { $$ = { md: $1, notes: $3 }; }
     | MD
-      { $$ = { md: $1, notes: '' }; }
+      { $$ = { md: $1, notes: [] }; }
     ;
 
 OPT_NOTES
     : EOS NOTES 
       { $$ = $2; }
     | EOS
-      { $$ = ''; }
+      { $$ = []; }
     ;
 
 // TODO: fucking extract sentences
 NOTES
     : LINE EOS NOTES
-      { $$ = $1+$2+$3; }
+      { $$ = [$1].concat($3); }
     | LINE EOS
-      { $$ = $1; }
+      { $$ = [$1]; }
     | EOS NOTES
-      { $$ = $1+$2; }
+      { $$ = $2; }
     | EOS
-      { $$ = ''; }
+      { $$ = []; }
     ;
 
 MD 
