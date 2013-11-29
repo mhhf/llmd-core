@@ -36,6 +36,12 @@ describe('slide Parser', function(){
 		parser.parse('slide1\n???   this should be ignored\nnotes1').should.deep.equal(
        [{ from: 1, to: 3, md: 'slide1', notes:'notes1' }]
       );
+    parser.parse('slide1\n???').should.deep.equal(
+        [{ from:1, to: 2, md: 'slide1', notes:'' }]
+      );
+    parser.parse('slide1\n??? da fuck is this?').should.deep.equal(
+        [{ from:1, to: 2, md: 'slide1', notes:'' }]
+      );
   });
 
   it('should extract notes split with the "???" seperator', function() {
@@ -52,7 +58,6 @@ describe('slide Parser', function(){
       { from: 1, to: 6, md: 'slide\n```\n---\n```', notes: 'notes' } 
     ]);
   });
-
 
 })
 

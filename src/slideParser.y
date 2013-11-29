@@ -61,10 +61,17 @@ SLIDES
     ;
 
 SLIDE
-    : MD NOTES_SEPERATOR EOS NOTES 
-      { $$ = { md: $1, notes: $4 }; }
+    : MD NOTES_SEPERATOR OPT_NOTES
+      { $$ = { md: $1, notes: $3 }; }
     | MD
       { $$ = { md: $1, notes: '' }; }
+    ;
+
+OPT_NOTES
+    : EOS NOTES 
+      { $$ = $2; }
+    | EOS
+      { $$ = ''; }
     ;
 
 // TODO: fucking extract sentences
