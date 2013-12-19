@@ -1,8 +1,8 @@
+fs = require('fs');
 Parser = require('jison').Parser;
 bnf = require('ebnf-parser');
 Lexer = require('jison-lex');
 chai = require('chai');
-fs = require('fs');
 
 var should = require('chai').should()
 
@@ -10,10 +10,10 @@ var should = require('chai').should()
 describe('slide Parser', function(){
 
 	// Load the grammer file and parse the parser
-	before( function(done){
-		var grammar = fs.readFileSync('./src/slideParser.y','utf8');
-		parser = new Parser(grammar);
-		done();
+  before( function(done){
+    var grammar = fs.readFileSync('src/slideParser.y','utf8');
+    parser = new Parser(grammar);
+    done();
 	});
 
 	it('should ectract --- lines', function() {
@@ -62,6 +62,12 @@ describe('slide Parser', function(){
     ]);
 		parser.parse('slide\n```\n---\n```\n???\nnotes').should.deep.equal([
       { from: 1, to: 6, md: 'slide\n```\n---\n```', notes: ['notes'] } 
+    ]);
+  });
+  
+  it('should extract package', function() {
+    parser.parse('slide\n{{\n???\n}}\n???\nnotes').should.deep.equal([
+      { from: 1, to: 6, md: 'slide', notes: ['notes'] } 
     ]);
   });
 

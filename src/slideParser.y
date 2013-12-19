@@ -3,6 +3,7 @@
 /* lexical grammar */
 %lex
 %x code
+%x package
 
 RN                    \r\n
 EOL 									\r\n|\r|\n        /* end of line character */
@@ -22,6 +23,11 @@ WS                    [\t ]							/* whitespace character */
 <INITIAL>'```'{NEOL}*      { this.begin('code'); return 'BEGIN_CODE'; }
 <code>'```'{NEOL}*         { this.popState(); return 'END_CODE'; }
 <code>{NEOL}*              { return 'CODELINE'; }
+
+<INITIAL>'{{'              { this.begin('package'); return 'BEGIN_BRACE' }
+<package>'}}'              { this.popState(); return 'END_BRACE' }
+<package>{NEOL}*           return 'PACKAGELINE';
+
 '---'{NEOL}*               return 'SLIDE_SEPERATOR'
 '???'{NEOL}*               return 'NOTES_SEPERATOR'
 {NEOL}*                    return 'LINE'
@@ -89,10 +95,20 @@ NOTES
 MD 
     : LINE EOS MD
       { $$ = $1+($3!=''?$2+$3:''); }
+    | BEGIN_BRACE EOS PACKAGELINES END_BRACE EOS MD
+      { $$ = $6; }
     | BEGIN_CODE EOS CODELINES END_CODE EOS MD
       { $$ = $1+$2+$3+$4+($6!=''? $5+$6: ''); }
     | EOS MD
       { $$ = $1+$2; }
+    |
+      { $$ = ''; }
+    ;
+
+PACKAGELINES 
+    : PACKAGELINE EOS PACKAGELINES
+      { $$ = $1+$2+$3; }
+    | EOS PACKAGELINES
     |
       { $$ = ''; }
     ;
