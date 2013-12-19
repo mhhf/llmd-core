@@ -27,20 +27,20 @@ describe('slide Parser', function(){
   it('should ignore chars after "---" ', function() {
 		parser.parse('slide1\n---   \nslide2').length.should.equal(2);
 		parser.parse('slide1\n---   this should be ignored\nslide2').should.deep.equal(
-       [{ from: 1, to: 2, md: 'slide1', notes:[] }, { from: 3, to: 3, md: 'slide2', notes:[] }]
+       [{ from: 1, to: 2, md:[  'slide1' ], notes:[] }, { from: 3, to: 3, md:[  'slide2' ], notes:[] }]
       );
   });
 
   it('should ignore chars after "???" ', function() {
 		parser.parse('slide1\n???   \nnotes2').length.should.equal(1);
 		parser.parse('slide1\n???   this should be ignored\nnotes1').should.deep.equal(
-       [{ from: 1, to: 3, md: 'slide1', notes: ['notes1'] }]
+       [{ from: 1, to: 3, md:[  'slide1' ], notes: ['notes1'] }]
       );
     parser.parse('slide1\n???').should.deep.equal(
-        [{ from:1, to: 2, md: 'slide1', notes:[] }]
+        [{ from:1, to: 2, md:[  'slide1' ], notes:[] }]
       );
     parser.parse('slide1\n??? da fuck is this?').should.deep.equal(
-        [{ from:1, to: 2, md: 'slide1', notes:[] }]
+        [{ from:1, to: 2, md:[  'slide1' ], notes:[] }]
       );
   });
 
@@ -58,16 +58,16 @@ describe('slide Parser', function(){
 
   it('should ignore "---" and "???" in codelines', function() {
 		parser.parse('slide\n```\n???\n```\n???\nnotes').should.deep.equal([
-      { from: 1, to: 6, md: 'slide\n```\n???\n```', notes: ['notes'] } 
+      { from: 1, to: 6, md:[  'slide\n```\n???\n```' ], notes: ['notes'] } 
     ]);
 		parser.parse('slide\n```\n---\n```\n???\nnotes').should.deep.equal([
-      { from: 1, to: 6, md: 'slide\n```\n---\n```', notes: ['notes'] } 
+      { from: 1, to: 6, md:[  'slide\n```\n---\n```' ], notes: ['notes'] } 
     ]);
   });
   
   it('should extract package', function() {
     parser.parse('slide\n{{\n???\n}}\n???\nnotes').should.deep.equal([
-      { from: 1, to: 6, md: 'slide', notes: ['notes'] } 
+      { from: 1, to: 6, md:[ 'slide\n', {type:'package',data:'???\n'} ], notes: ['notes'] } 
     ]);
   });
 

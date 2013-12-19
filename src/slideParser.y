@@ -68,7 +68,26 @@ SLIDES
 
 SLIDE
     : MD NOTES_SEPERATOR OPT_NOTES
-      { $$ = { md: $1, notes: $3 }; }
+      { 
+        cleanMd = (function(arr){
+          var o = [];
+          var lastStr = "";
+          for(var i=0; i<arr.length; i++) {
+            if( typeof arr[i] == "string" )
+              lastStr += arr[i];
+            else {
+              if( lastStr != '' ) {
+                o.push(lastStr);
+                lastStr = '';
+              }
+              o.push(arr[i]);
+            }
+          }
+          if( lastStr != '' ) o.push(lastStr);
+          return o;
+        });
+        $$ = { md: cleanMd($1), notes: $3 }; 
+      }
     | MD
       { $$ = { md: $1, notes: [] }; }
     ;
@@ -94,15 +113,15 @@ NOTES
 
 MD 
     : LINE EOS MD
-      { $$ = $1+($3!=''?$2+$3:''); }
+      { $$ = [$1+($3.length>0?$2:'')].concat($3); }
     | BEGIN_BRACE EOS PACKAGELINES END_BRACE EOS MD
-      { $$ = $6; }
+      { $$ = [{ type:"package", data: $3 }].concat($6); }
     | BEGIN_CODE EOS CODELINES END_CODE EOS MD
-      { $$ = $1+$2+$3+$4+($6!=''? $5+$6: ''); }
+      { $$ = [$1+$2+$3+$4+($6.length>0?$5:'')].concat($6); }
     | EOS MD
-      { $$ = $1+$2; }
+      { $$ = [$2.length>0?$1:''].concat($2); }
     |
-      { $$ = ''; }
+      { $$ = []; }
     ;
 
 PACKAGELINES 
