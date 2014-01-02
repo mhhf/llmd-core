@@ -26,14 +26,14 @@ BL                    ({EOL}*{WS}*)*
 <code>'```'{NEOL}*         { this.popState(); return 'END_CODE'; }
 <code>{NEOL}*              { return 'CODELINE'; }
 
-<INITIAL>'{{'{BL}          { this.begin('packagename'); return 'BEGIN_BRACE' }
+<INITIAL>'{{'{BL}          { this.begin('packagename'); return 'BEGIN_PACKAGE' }
 <packagename>\w*           { this.popState(); this.begin('package'); return 'PACKAGENAME' }
-<package>'}}'              { this.popState(); return 'END_BRACE'; }
+<package>'}}'              { this.popState(); return 'END_PACKAGE'; }
 
 /* [todo] - parse json, not lines */
-<package>{BL}*'{'           { this.begin('packagecontent'); return 'BRACE_OPEN';  }
+<package,packagecontent>{BL}*'{'           { this.begin('packagecontent'); return 'BRACE_OPEN';  }
 <packagecontent>{BL}'}'{BL} { this.popState(); return 'BRACE_CLOSE'; }
-<packagecontent>{NEOL}*     { return 'PACKAGELINE'; }
+<packagecontent>[^{}]*     { return 'PACKAGELINE'; }
 
 
 
@@ -123,7 +123,7 @@ NOTES
 MD 
     : LINE EOS MD
       { $$ = [$1+($3.length>0?$2:'')].concat($3); }
-    | BEGIN_BRACE PACKAGENAME PACKAGELINES END_BRACE EOS MD
+    | BEGIN_PACKAGE PACKAGENAME PACKAGELINES END_PACKAGE EOS MD
       { $$ = [{ type:"package", name: $2, data: $3 }].concat($6); }
     | BEGIN_CODE EOS CODELINES END_CODE EOS MD
       { $$ = [$1+$2+$3+$4+($6.length>0?$5:'')].concat($6); }

@@ -74,8 +74,8 @@
 var slideParser = (function(){
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"MDARKDOWN":3,"SLIDES":4,"SLIDE":5,"SLIDE_SEPERATOR":6,"EOS":7,"MD":8,"NOTES_SEPERATOR":9,"OPT_NOTES":10,"NOTES":11,"LINE":12,"BEGIN_BRACE":13,"PACKAGENAME":14,"PACKAGELINES":15,"END_BRACE":16,"BEGIN_CODE":17,"CODELINES":18,"END_CODE":19,"BRACE_OPEN":20,"BRACE_CLOSE":21,"PACKAGELINE":22,"CODELINE":23,"EOL":24,"EOF":25,"$accept":0,"$end":1},
-terminals_: {2:"error",6:"SLIDE_SEPERATOR",9:"NOTES_SEPERATOR",12:"LINE",13:"BEGIN_BRACE",14:"PACKAGENAME",16:"END_BRACE",17:"BEGIN_CODE",19:"END_CODE",20:"BRACE_OPEN",21:"BRACE_CLOSE",22:"PACKAGELINE",23:"CODELINE",24:"EOL",25:"EOF"},
+symbols_: {"error":2,"MDARKDOWN":3,"SLIDES":4,"SLIDE":5,"SLIDE_SEPERATOR":6,"EOS":7,"MD":8,"NOTES_SEPERATOR":9,"OPT_NOTES":10,"NOTES":11,"LINE":12,"BEGIN_PACKAGE":13,"PACKAGENAME":14,"PACKAGELINES":15,"END_PACKAGE":16,"BEGIN_CODE":17,"CODELINES":18,"END_CODE":19,"BRACE_OPEN":20,"BRACE_CLOSE":21,"PACKAGELINE":22,"CODELINE":23,"EOL":24,"EOF":25,"$accept":0,"$end":1},
+terminals_: {2:"error",6:"SLIDE_SEPERATOR",9:"NOTES_SEPERATOR",12:"LINE",13:"BEGIN_PACKAGE",14:"PACKAGENAME",16:"END_PACKAGE",17:"BEGIN_CODE",19:"END_CODE",20:"BRACE_OPEN",21:"BRACE_CLOSE",22:"PACKAGELINE",23:"CODELINE",24:"EOL",25:"EOF"},
 productions_: [0,[3,1],[4,4],[4,1],[5,3],[5,1],[10,2],[10,1],[11,3],[11,2],[11,2],[11,1],[8,3],[8,6],[8,6],[8,2],[8,0],[15,3],[15,2],[15,2],[15,0],[18,3],[18,2],[18,0],[7,1],[7,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
@@ -662,8 +662,8 @@ case 14:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:(\r\n|\r|\n)*$)/,/^(?:(\r\n|\r|\n))/,/^(?:```([^\r\n])*)/,/^(?:```([^\r\n])*)/,/^(?:([^\r\n])*)/,/^(?:\{\{(((\r\n|\r|\n)*([\t ])*)*))/,/^(?:\w*)/,/^(?:\}\})/,/^(?:(((\r\n|\r|\n)*([\t ])*)*)*\{)/,/^(?:(((\r\n|\r|\n)*([\t ])*)*)\}(((\r\n|\r|\n)*([\t ])*)*))/,/^(?:([^\r\n])*)/,/^(?:---([^\r\n])*)/,/^(?:\?\?\?([^\r\n])*)/,/^(?:([^\r\n])*)/,/^(?:.)/],
-conditions: {"packagecontent":{"rules":[0,1,9,10],"inclusive":false},"packagename":{"rules":[0,1,6],"inclusive":false},"package":{"rules":[0,1,7,8],"inclusive":false},"code":{"rules":[0,1,3,4],"inclusive":false},"INITIAL":{"rules":[0,1,2,5,11,12,13,14],"inclusive":true}}
+rules: [/^(?:(\r\n|\r|\n)*$)/,/^(?:(\r\n|\r|\n))/,/^(?:```([^\r\n])*)/,/^(?:```([^\r\n])*)/,/^(?:([^\r\n])*)/,/^(?:\{\{(((\r\n|\r|\n)*([\t ])*)*))/,/^(?:\w*)/,/^(?:\}\})/,/^(?:(((\r\n|\r|\n)*([\t ])*)*)*\{)/,/^(?:(((\r\n|\r|\n)*([\t ])*)*)\}(((\r\n|\r|\n)*([\t ])*)*))/,/^(?:[^{}]*)/,/^(?:---([^\r\n])*)/,/^(?:\?\?\?([^\r\n])*)/,/^(?:([^\r\n])*)/,/^(?:.)/],
+conditions: {"packagecontent":{"rules":[0,1,8,9,10],"inclusive":false},"packagename":{"rules":[0,1,6],"inclusive":false},"package":{"rules":[0,1,7,8],"inclusive":false},"code":{"rules":[0,1,3,4],"inclusive":false},"INITIAL":{"rules":[0,1,2,5,11,12,13,14],"inclusive":true}}
 };
 return lexer;
 })();

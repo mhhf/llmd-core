@@ -67,6 +67,9 @@ describe('slide Parser', function(){
   
   it('should extract package', function() {
     
+    parser.parse('slide\n{{\npackageName  {\nbla:{a:\'blubb\'}\n}}}\n???\nnotes').should.deep.equal([
+      { from: 1, to: 7, md:[ 'slide\n', {type:'package', name: "packageName", data:'  {\nbla:{a:\'blubb\'}\n}'} ], notes: ['notes'] } 
+    ]);
     
     parser.parse('slide\n{{\npackageName  {\nbla:\'blubb\'\n}}}\n???\nnotes').should.deep.equal([
       { from: 1, to: 7, md:[ 'slide\n', {type:'package', name: "packageName", data:'  {\nbla:\'blubb\'\n}'} ], notes: ['notes'] } 
@@ -81,16 +84,23 @@ describe('slide Parser', function(){
     ]);
     
     parser.parse('slide\n{{\npackageName\n{\nbla:\'blubb\'\n}\n}}\n???\nnotes').should.deep.equal([
-      { from: 1, to: 9, md:[ 'slide\n', {type:'package', name: "packageName", data:'{\nbla:\'blubb\'\n}\n'} ], notes: ['notes'] } 
+      { from: 1, to: 9, md:[ 'slide\n', {type:'package', name: "packageName", data:'\n{\nbla:\'blubb\'\n}\n'} ], notes: ['notes'] } 
     ]);
     
     parser.parse('slide\n{{packageName\n{\nbla:\'blubb\'\n}\n}}\n???\nnotes').should.deep.equal([
-      { from: 1, to: 8, md:[ 'slide\n', {type:'package', name: "packageName", data:'{\nbla:\'blubb\'\n}\n'} ], notes: ['notes'] } 
+      { from: 1, to: 8, md:[ 'slide\n', {type:'package', name: "packageName", data:'\n{\nbla:\'blubb\'\n}\n'} ], notes: ['notes'] } 
     ]);
   });
 
 
 })
+
+
+describe('slide Parser', function(){
+  
+  
+  
+});
 
 var test = function( name ){
 	var test   = fs.readFileSync('./test/tests/'+name+'.md','utf8');
