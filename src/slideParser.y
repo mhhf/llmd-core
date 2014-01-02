@@ -5,6 +5,7 @@
 %x code
 %x package
 %x packagename
+%x packagecontent
 
 RN                    \r\n
 EOL 									\r\n|\r|\n        /* end of line character */
@@ -27,10 +28,14 @@ BL                    ({EOL}*{WS}*)*
 
 <INITIAL>'{{'{BL}          { this.begin('packagename'); return 'BEGIN_BRACE' }
 <packagename>\w*           { this.popState(); this.begin('package'); return 'PACKAGENAME' }
-<package>'}}''}'*          { this.popState(); return 'END_BRACE' }
+<package>'}}'              { this.popState(); return 'END_BRACE'; }
 
 /* [todo] - parse json, not lines */
-<package>{NEOL}*           return 'PACKAGELINE';
+<package>{BL}*'{'           { this.begin('packagecontent'); return 'BRACE_OPEN';  }
+<packagecontent>{BL}'}'{BL} { this.popState(); return 'BRACE_CLOSE'; }
+<packagecontent>{NEOL}*     { return 'PACKAGELINE'; }
+
+
 
 '---'{NEOL}*               return 'SLIDE_SEPERATOR'
 '???'{NEOL}*               return 'NOTES_SEPERATOR'
@@ -130,9 +135,12 @@ MD
 
 // [todo] - parse package name and opt json option
 PACKAGELINES 
-    : PACKAGELINE EOS PACKAGELINES
+    : BRACE_OPEN PACKAGELINES BRACE_CLOSE
       { $$ = $1+$2+$3; }
     | EOS PACKAGELINES
+      { $$ = $1 + $2; }
+    | PACKAGELINE PACKAGELINES
+      { $$ = $1 + $2; }
     |
       { $$ = ''; }
     ;

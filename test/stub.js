@@ -67,6 +67,11 @@ describe('slide Parser', function(){
   
   it('should extract package', function() {
     
+    
+    parser.parse('slide\n{{\npackageName  {\nbla:\'blubb\'\n}}}\n???\nnotes').should.deep.equal([
+      { from: 1, to: 7, md:[ 'slide\n', {type:'package', name: "packageName", data:'  {\nbla:\'blubb\'\n}'} ], notes: ['notes'] } 
+    ]);
+    
     parser.parse('slide\n{{\npackageName  {\nbla:\'blubb\'\n}\n}}\n???\nnotes').should.deep.equal([
       { from: 1, to: 8, md:[ 'slide\n', {type:'package', name: "packageName", data:'  {\nbla:\'blubb\'\n}\n'} ], notes: ['notes'] } 
     ]);
