@@ -4,6 +4,7 @@
 %lex
 %x code
 %x package
+%x packagename
 
 RN                    \r\n
 EOL 									\r\n|\r|\n        /* end of line character */
@@ -24,7 +25,8 @@ WS                    [\t ]							/* whitespace character */
 <code>'```'{NEOL}*         { this.popState(); return 'END_CODE'; }
 <code>{NEOL}*              { return 'CODELINE'; }
 
-<INITIAL>'{{'              { this.begin('package'); return 'BEGIN_BRACE' }
+<INITIAL>'{{'{EOL}*        { this.begin('packagename'); return 'BEGIN_BRACE' }
+<packagename>{NEOL}*       { this.popState(); this.begin('package'); return 'PACKAGENAME' }
 <package>'}}'              { this.popState(); return 'END_BRACE' }
 <package>{NEOL}*           return 'PACKAGELINE';
 
@@ -114,8 +116,8 @@ NOTES
 MD 
     : LINE EOS MD
       { $$ = [$1+($3.length>0?$2:'')].concat($3); }
-    | BEGIN_BRACE EOS PACKAGELINES END_BRACE EOS MD
-      { $$ = [{ type:"package", data: $3 }].concat($6); }
+    | BEGIN_BRACE PACKAGENAME EOS PACKAGELINES END_BRACE EOS MD
+      { $$ = [{ type:"package", name: $2, data: $4 }].concat($7); }
     | BEGIN_CODE EOS CODELINES END_CODE EOS MD
       { $$ = [$1+$2+$3+$4+($6.length>0?$5:'')].concat($6); }
     | EOS MD
@@ -124,6 +126,7 @@ MD
       { $$ = []; }
     ;
 
+// [todo] - parse package name and opt json option
 PACKAGELINES 
     : PACKAGELINE EOS PACKAGELINES
       { $$ = $1+$2+$3; }
