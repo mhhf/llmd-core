@@ -11,7 +11,7 @@ EOL 									\r\n|\r|\n        /* end of line character */
 NEOL									[^\r\n]	          /* not end of line character */
 TB                    [^ \t\r\n]        /* textblock character */
 WS                    [\t ]							/* whitespace character */
-
+BL                    ({EOL}*{WS}*)*
 
 %%
 
@@ -25,8 +25,8 @@ WS                    [\t ]							/* whitespace character */
 <code>'```'{NEOL}*         { this.popState(); return 'END_CODE'; }
 <code>{NEOL}*              { return 'CODELINE'; }
 
-<INITIAL>'{{'{EOL}*        { this.begin('packagename'); return 'BEGIN_BRACE' }
-<packagename>\w*       { this.popState(); this.begin('package'); return 'PACKAGENAME' }
+<INITIAL>'{{'{BL}          { this.begin('packagename'); return 'BEGIN_BRACE' }
+<packagename>\w*           { this.popState(); this.begin('package'); return 'PACKAGENAME' }
 <package>'}}''}'*          { this.popState(); return 'END_BRACE' }
 
 /* [todo] - parse json, not lines */
