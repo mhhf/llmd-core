@@ -26,8 +26,10 @@ WS                    [\t ]							/* whitespace character */
 <code>{NEOL}*              { return 'CODELINE'; }
 
 <INITIAL>'{{'{EOL}*        { this.begin('packagename'); return 'BEGIN_BRACE' }
-<packagename>{NEOL}*       { this.popState(); this.begin('package'); return 'PACKAGENAME' }
-<package>'}}'              { this.popState(); return 'END_BRACE' }
+<packagename>\w*       { this.popState(); this.begin('package'); return 'PACKAGENAME' }
+<package>'}}''}'*          { this.popState(); return 'END_BRACE' }
+
+/* [todo] - parse json, not lines */
 <package>{NEOL}*           return 'PACKAGELINE';
 
 '---'{NEOL}*               return 'SLIDE_SEPERATOR'
@@ -116,8 +118,8 @@ NOTES
 MD 
     : LINE EOS MD
       { $$ = [$1+($3.length>0?$2:'')].concat($3); }
-    | BEGIN_BRACE PACKAGENAME EOS PACKAGELINES END_BRACE EOS MD
-      { $$ = [{ type:"package", name: $2, data: $4 }].concat($7); }
+    | BEGIN_BRACE PACKAGENAME PACKAGELINES END_BRACE EOS MD
+      { $$ = [{ type:"package", name: $2, data: $3 }].concat($6); }
     | BEGIN_CODE EOS CODELINES END_CODE EOS MD
       { $$ = [$1+$2+$3+$4+($6.length>0?$5:'')].concat($6); }
     | EOS MD
