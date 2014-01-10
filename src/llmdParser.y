@@ -135,8 +135,8 @@ MD
 
 // [todo] - parse package name and opt json option
 PACKAGELINES 
-    : BRACE_OPEN PACKAGELINES BRACE_CLOSE
-      { $$ = $1+$2+$3; }
+    : BRACE_OPEN PACKAGELINES BRACE_CLOSE PACKAGELINES
+      { $$ = $1+$2+$3+$4; }
     | EOS PACKAGELINES
       { $$ = $1 + $2; }
     | PACKAGELINE PACKAGELINES

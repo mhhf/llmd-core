@@ -1,7 +1,5 @@
-slide
-{{
-  packageName  {
-    bla:{a:'blubb'}
+{{multipleChoice {
+	"questions": [
+    	{"question": true }
+    ]
 }}}
-???
-notes

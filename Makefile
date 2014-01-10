@@ -1,7 +1,7 @@
-all: src/slideParser.y
-	jison src/slideParser.y
-	echo "\nSlideParser = slideParser;" >> slideParser.js
+all: src/llmdParser.y
+	jison src/llmdParser.y
+	echo "\nLlmdParser = llmdParser;" >> llmdParser.js
 
-test: src/slideParser.y test/stub.js
+test:
 	mocha test
 

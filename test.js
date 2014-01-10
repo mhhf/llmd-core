@@ -4,7 +4,7 @@ bnf = require('ebnf-parser');
 Lexer = require('jison-lex');
 chai = require('chai');
 
-var grammar = fs.readFileSync('src/slideParser.y','utf8');
+var grammar = fs.readFileSync('src/llmdParser.y','utf8');
 var content = fs.readFileSync('content.md','utf8');
 
 parser = new Parser(grammar);
@@ -28,4 +28,4 @@ do{
 console.log('\nOUTPUT:');
 
 var output = parser.parse(content);
-console.log(output);
+console.log(JSON.stringify(output,null,2));

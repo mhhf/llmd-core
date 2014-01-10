@@ -11,7 +11,7 @@ describe('slide Parser', function(){
 
 	// Load the grammer file and parse the parser
   before( function(done){
-    var grammar = fs.readFileSync('src/slideParser.y','utf8');
+    var grammar = fs.readFileSync('src/llmdParser.y','utf8');
     parser = new Parser(grammar);
     done();
 	});
@@ -91,6 +91,13 @@ describe('slide Parser', function(){
       { from: 1, to: 8, md:[ 'slide\n', {type:'package', name: "packageName", data:'\n{\nbla:\'blubb\'\n}\n'} ], notes: ['notes'] } 
     ]);
   });
+  
+  it('should ignore [] brackets', function(){
+    
+    parser.parse('{{multipleChoice {\n"questions": [\n{"question": true }\n]\n}}}').should.deep.equal([
+      { from: 1, to: 5, md:[ {type:'package', name: "multipleChoice", data:' {\n"questions": [\n{"question": true }\n]\n}'} ], notes: [] } 
+    ]);
+  })
 
 
 })

@@ -1,6 +1,6 @@
 {
-  "name": "slideParser",
-  "description": "Parse slide flavored markdown to an AST",
+  "name": "llmdParser",
+  "description": "Parse liquidLearning markdown to an AST",
   "homepage": "https://bitbucket.org/liquidlearningdev/slideparser",
   "version": "0.1.0",
 	"author": "Denis Erfurt <denis.erfurt@gmail.com>",
