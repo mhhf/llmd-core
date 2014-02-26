@@ -29,7 +29,7 @@ BL                    ({EOL}*{WS}*)*
 
 <INITIAL>'{{'{BL}          { this.begin('packagename'); return 'BEGIN_PACKAGE' }
 <packagename>\w*           { this.popState(); this.begin('package'); return 'PACKAGENAME' }
-<package>'}}'              { this.popState(); return 'END_PACKAGE'; }
+<package>\s*'}}'              { this.popState(); return 'END_PACKAGE'; }
 
 /* [todo] - parse json, not lines */
 <package,packagecontent>{BL}*'{'           { this.begin('packagecontent'); return 'BRACE_OPEN';  }
@@ -87,8 +87,8 @@ BLOCK
       { 
         $$ = { exp: $3 };
       }
-    | BEGIN_PACKAGE PACKAGENAME PACKAGELINES END_PACKAGE EOS
-      { $$ = [{ type:"package", name: $2, data: $3 }]; }
+    | BEGIN_PACKAGE PACKAGENAME PACKAGELINES END_PACKAGE EOL
+      { $$ = { package:$2, data: $3 }; }
     | BEGIN_CODE EOS CODELINES END_CODE EOS
       { $$ = [$1+$2+$3+$4+($6.length>0?$5:'')]; }
     | MD

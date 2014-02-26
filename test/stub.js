@@ -51,14 +51,67 @@ describe('slide Parser', function(){
     
   });
   
+  describe('package blocks', function(){
+    
+    it('should find them', function() {
+      parser.parse('{{ packageName }}\n').should.deep.equal([{
+        "package": "packageName",
+        "data": ""
+      }]);
+    });
+    
+    it('should find package data', function() {
+      parser.parse('{{ packageName {} }}\n').should.deep.equal([{
+        "package": "packageName",
+        "data": " {} "
+      }]);
+      
+      parser.parse('{{ packageName {}}}\n').should.deep.equal([{
+        "package": "packageName",
+        "data": " {}"
+      }]);
+      
+      parser.parse('{{ packageName \n{\n}\n}}\n').should.deep.equal([{
+        "package": "packageName",
+        "data": " \n{\n}\n"
+      }]);
+    });
+    
+    it('should find packageData nested json', function() {
+      
+      parser.parse('{{ packageName {a:{b:{c:"d"}}}}}\n').should.deep.equal([{
+        "package": "packageName",
+        "data": ' {a:{b:{c:"d"}}}'
+      }]);
+      
+      
+      // not supported yet
+      // parser.parse('{{ packageName {a:"{b:c:d}}"}}}\n').should.deep.equal([{
+      //   "package": "packageName",
+      //   "data": ' {a:{b:{c:"d"}}}'
+      // }]);
+      // 
+      // 
+      // parser.parse('{{ packageName {a:"{b:{c:d}"}}}\n').should.deep.equal([{
+      //   "package": "packageName",
+      //   "data": ' {a:{b:{c:"d"}}}'
+      // }]);
+    });
+    
+  });
+  
   describe('block interaction', function(){
     
-    it('should find multiple blocks', function() {
+    it('should find multiple blocks md,exp', function() {
       parser.parse('markdown1\n???\nexp\n???\n').should.deep.equal([{md:"markdown1\n"},{exp:["exp"]}]);
     });
     
-    it('should find multiple blocks', function() {
+    it('should find multiple blocks exp,md', function() {
       parser.parse('???\nexp\n???\nmarkdown1\n').should.deep.equal([{exp:["exp"]},{md:"markdown1\n"}]);
+    });
+    
+    it('should find multiple blocks exp,md,exp,md', function() {
+      parser.parse('???\nexp\n???\nmarkdown1\n???\nexp2\n???\nmarkdown2\n').should.deep.equal([{exp:["exp"]},{md:"markdown1\n"},{exp:["exp2"]},{md:"markdown2\n"}]);
     });
     
   });
