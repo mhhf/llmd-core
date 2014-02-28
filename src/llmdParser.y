@@ -27,7 +27,7 @@ BL                    ({EOL}*{WS}*)*
 <code>'```'{NEOL}*         { this.popState(); return 'END_CODE'; }
 <code>{NEOL}*              { return 'CODELINE'; }
 
-<INITIAL>'{{'{BL}          { this.begin('packagename'); return 'BEGIN_PACKAGE' }
+<INITIAL>'{{>'{BL}          { this.begin('packagename'); return 'BEGIN_PACKAGE' }
 <packagename>\w*           { this.popState(); this.begin('package'); return 'PACKAGENAME' }
 <package>\s*'}}'              { this.popState(); return 'END_PACKAGE'; }
 
@@ -38,8 +38,8 @@ BL                    ({EOL}*{WS}*)*
 
 
 
-<INITIAL>'???'{NEOL}*               { this.begin('expBlock'); return 'BEGIN_EXP'; }
-<expBlock>'???'{NEOL}*     { this.popState(); return 'END_EXP'; }
+<INITIAL>'{{#???}}'{NEOL}*               { this.begin('expBlock'); return 'BEGIN_EXP'; }
+<expBlock>'{{/???}}'{NEOL}*     { this.popState(); return 'END_EXP'; }
 <*>{NEOL}*                    return 'LINE'
 .                          return 'INVALID'
 
@@ -61,9 +61,10 @@ MDARKDOWN: BLOCKS EOF
               l = bs[0];
               
             for(var i = 1; i<bs.length; i++) {
-              if(bs[i]['md'] && l['md'])
+              if(bs[i]['md'] && l['md']) {
                 l['md'] += bs[i]['md'];
-              else {
+                l.to = bs[i].to;
+              } else {
                 blocks.push(l)
                 l = bs[i];
               }
@@ -77,7 +78,12 @@ MDARKDOWN: BLOCKS EOF
 
 BLOCKS
     : BLOCK BLOCKS
-      { $$ = [$1].concat($2); }
+      { 
+        var block = $1;
+        block.from = @1.first_line;
+        block.to = @1.last_line;
+        $$ = [$1].concat($2); 
+      }
     | 
       { $$ = []; }
     ;
