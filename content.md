@@ -1,5 +1,3 @@
-{{multipleChoice {
-	"questions": [
-    	{"question": true }
-    ]
-}}}
+{{#??? en}}
+This is a Block.
+{{/???}}
