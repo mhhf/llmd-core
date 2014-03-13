@@ -32,8 +32,7 @@ BL                    ({EOL}*{WS}*)*
 <code>'```'{NEOL}*         { this.popState(); return 'END_CODE'; }
 <code>{NEOL}*              { return 'CODELINE'; }
 
-<INITIAL>'{{>'\s*         { this.begin('packagename'); return 'BEGIN_PACKAGE' }
-<packagename>\w*           { this.popState(); this.begin('package'); return 'PACKAGENAME' }
+<INITIAL>'{{>'\s*(\w+)     { this.begin('package'); yytext = this.matches[1]; return 'BEGIN_PACKAGE' }
 <package>\s*'}}'           { this.popState(); return 'END_PACKAGE'; }
 
 
@@ -41,6 +40,8 @@ BL                    ({EOL}*{WS}*)*
 <package,packagecontent>{BL}*'{'           { this.begin('packagecontent'); return 'BRACE_OPEN';  }
 <packagecontent>{BL}'}'{BL}                { this.popState(); return 'BRACE_CLOSE'; }
 <packagecontent>[^{}]*                     { return 'PACKAGELINE'; }
+
+<package>\s*([\w\.\=\'\"]+)                    { yytext = this.matches[1]; return 'PARAM'; }             
 
 
 
@@ -118,8 +119,8 @@ BLOCK
         }
         $$ = { type: 'block', name: $1, data: $5, opt: $2 };
       }
-    | BEGIN_PACKAGE PACKAGENAME PACKAGELINES END_PACKAGE EOL
-      { $$ = { package:$2, data: $3 }; }
+    | BEGIN_PACKAGE OPT_PARAMS PACKAGELINES END_PACKAGE EOL
+      { $$ = { type:'pkg', name:$1, opt:$2, data: $3 }; }
     | BEGIN_CODE EOS CODELINES END_CODE EOS
       { $$ = [$1+$2+$3+$4+($6.length>0?$5:'')]; }
     | MD
