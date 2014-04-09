@@ -24,9 +24,10 @@ var token,i=0, max = 29;
 do{
 	(token = lex.lex());
 	i++;
-	console.log( '\t< '+lex.topState()+', '+token.yellow+', '+(token!='EOL'?lex.match.replace('\n','\\n').red:'\\n'.red)+' >' );
+	console.log( '\t< '+lex.topState()+', '+token.yellow+', '+(token!='EOL'?lex.yytext.replace('\n','\\n').red:'\\n'.red)+' >' );
 } while ( token != 'EOF' && (i<max || max == -1) )
 console.log('\nOUTPUT:'.green);
 
+parser.yy.ctx = {keks:{wow:'aha?'}};
 var output = parser.parse(content);
 console.log(JSON.stringify(output,null,2));

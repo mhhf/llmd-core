@@ -1,3 +1,6 @@
+/*
+  [TODO] - free package from data atribute
+*/
 /* description: Parses end executes mathematical expressions. */
 
 /* lexical grammar */
@@ -41,13 +44,17 @@ BL                    ({EOL}*{WS}*)*
 <packagecontent>{BL}'}'{BL}                { this.popState(); return 'BRACE_CLOSE'; }
 <packagecontent>[^{}]*                     { return 'PACKAGELINE'; }
 
-<package>\s*([\w\.\=\'\"]+)                    { yytext = this.matches[1]; return 'PARAM'; }             
+<package>\s*\'(.*)\'                    { yytext = this.matches[1]; return 'STRING'; }             
+<package>\s*\"(.*)\"                    { yytext = this.matches[1]; return 'STRING'; }             
+<package>\s*([\w]+)                     { yytext = this.matches[1]; return 'VAR'; }             
 
 
 
 <INITIAL>'{{#'\s*([\w\?]+)        { this.begin('blockDef'); yytext = this.matches[1]; return 'BLOCK_DEF_START' }
 <blockDef>\s+                     /* ignore whitespace in definition */
-<blockDef>[\w\?]+                 { return 'PARAM'; }
+<blockDef>\'[\w\?]+\'             { return 'STRING'; }
+<blockDef>\"[\w\?]+\"             { return 'STRING'; }
+<blockDef>[\w\?]+                 { return 'VAR'; }
 <blockDef>'}}'{NEOL}*             { this.popState(); this.begin('block'); return 'BEGIN_BLOCK'; }
 <block>'{{/'([\w\?]+)'}}'{NEOL}*          { this.popState(); yytext = this.matches[1]; return 'END_BLOCK'; }
 
@@ -103,9 +110,20 @@ BLOCKS
       { $$ = []; }
     ;
 
+
+// [TODO] - Params can be strings, ints or vars
 OPT_PARAMS
-    : PARAM OPT_PARAMS
-      { $$ = [$1].concat($2) }
+    : VAR OPT_PARAMS
+      { 
+        if(yy.ctx[$VAR]) var param = yy.ctx[$VAR];
+        else throw new Error("ERROR: no value "+$VAR+" fonund in the context.");
+        
+        $$ = [param].concat($2)
+      }
+    | STRING OPT_PARAMS
+      {
+        $$ = [$STRING].concat($2)
+      }
     | 
       { $$ = [] }
     ;
@@ -120,7 +138,8 @@ BLOCK
         $$ = { type: 'block', name: $1, data: $5, opt: $2 };
       }
     | BEGIN_PACKAGE OPT_PARAMS PACKAGELINES END_PACKAGE EOL
-      { $$ = { type:'pkg', name:$1, opt:$2, data: $3 }; }
+      {
+      $$ = { type:'pkg', name:$1, opt:$2, data: $3 }; }
     | BEGIN_CODE EOS CODELINES END_CODE EOS
       { $$ = [$1+$2+$3+$4+($6.length>0?$5:'')]; }
     | MD
