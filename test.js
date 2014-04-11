@@ -6,6 +6,8 @@ bnf = require('ebnf-parser');
 Lexer = require('jison-lex');
 chai = require('chai');
 
+llmd = require('lib/llmd.js')
+
 var grammar = fs.readFileSync('src/llmdParser.y','utf8');
 var content = fs.readFileSync('content.md','utf8');
 
@@ -29,5 +31,7 @@ do{
 console.log('\nOUTPUT:'.green);
 
 parser.yy.ctx = {keks:{wow:'aha?'}};
+parser.yy.llmd = new llmd.LLMD();
+parser.yy.Block = llmd.Block;
 var output = parser.parse(content);
 console.log(JSON.stringify(output,null,2));
