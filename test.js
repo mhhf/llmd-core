@@ -15,8 +15,6 @@ parser = new Parser(grammar);
 lexer = new Lexer(grammar);
 
 
-
-
 console.log('\nCONTENT:'.green);
 console.log(content);
 
@@ -31,7 +29,8 @@ do{
 console.log('\nOUTPUT:'.green);
 
 parser.yy.ctx = {keks:{wow:'aha?'}};
-parser.yy.llmd = new llmd.LLMD();
-parser.yy.Block = llmd.Block;
+parser.yy.llmd = new LLMD();
+
 var output = parser.parse(content);
+
 console.log(JSON.stringify(output,null,2));

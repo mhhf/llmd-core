@@ -74,35 +74,16 @@
 var llmdParser = (function(){
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"MDARKDOWN":3,"BLOCKS":4,"EOF":5,"BLOCK":6,"OPT_PARAMS":7,"VAR":8,"STRING":9,"BLOCK_DEF_START":10,"BEGIN_BLOCK":11,"EOS":12,"EXP_BLOCK":13,"END_BLOCK":14,"BEGIN_PACKAGE":15,"PACKAGELINES":16,"END_PACKAGE":17,"EOL":18,"BEGIN_CODE":19,"CODELINES":20,"END_CODE":21,"MD":22,"LINE":23,"BRACE_OPEN":24,"BRACE_CLOSE":25,"PACKAGELINE":26,"CODELINE":27,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",8:"VAR",9:"STRING",10:"BLOCK_DEF_START",11:"BEGIN_BLOCK",14:"END_BLOCK",15:"BEGIN_PACKAGE",17:"END_PACKAGE",18:"EOL",19:"BEGIN_CODE",21:"END_CODE",23:"LINE",24:"BRACE_OPEN",25:"BRACE_CLOSE",26:"PACKAGELINE",27:"CODELINE"},
-productions_: [0,[3,2],[4,2],[4,0],[7,2],[7,2],[7,0],[6,7],[6,5],[6,5],[6,1],[13,3],[13,2],[13,0],[22,2],[22,1],[16,4],[16,2],[16,2],[16,0],[20,3],[20,2],[20,0],[12,1],[12,1]],
+symbols_: {"error":2,"MDARKDOWN":3,"BLOCKS":4,"EOF":5,"BLOCK":6,"OPT_PARAMS":7,"VAR":8,"STRING":9,"BLOCK_DEF_START":10,"BEGIN_BLOCK":11,"EOS":12,"END_BLOCK":13,"BEGIN_PACKAGE":14,"END_PACKAGE":15,"EOL":16,"BEGIN_CODE":17,"CODELINES":18,"END_CODE":19,"LINES":20,"EXPR":21,"LINE":22,"CODELINE":23,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",8:"VAR",9:"STRING",10:"BLOCK_DEF_START",11:"BEGIN_BLOCK",13:"END_BLOCK",14:"BEGIN_PACKAGE",15:"END_PACKAGE",16:"EOL",17:"BEGIN_CODE",19:"END_CODE",21:"EXPR",22:"LINE",23:"CODELINE"},
+productions_: [0,[3,2],[4,2],[4,0],[7,2],[7,2],[7,0],[6,7],[6,4],[6,5],[6,1],[6,1],[20,1],[20,1],[18,3],[18,2],[18,0],[12,1],[12,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
 case 1: 
-          cleanBlocks = (function( bs ){
-            var blocks = [];
-            var l;
-            if( 0 in bs )
-              l = bs[0];
-              
-            for(var i = 1; i<bs.length; i++) {
-              if(bs[i]['md'] && l['md']) {
-                l['md'] += bs[i]['md'];
-                l.to = bs[i].to;
-              } else {
-                blocks.push(l)
-                l = bs[i];
-              }
-            }
-            if( l )
-              blocks.push(l);
-            return blocks;
-          })
-         return cleanBlocks($$[$0-1]); 
+         return yy.llmd.filterRoot($$[$0-1]); 
          
 break;
 case 2: 
@@ -117,10 +98,10 @@ break;
 case 3: this.$ = []; 
 break;
 case 4: 
-        if(yy.ctx[$$[$0-1]]) var param = yy.ctx[$$[$0-1]];
-        else throw new Error("ERROR: no value "+$$[$0-1]+" fonund in the context.");
+        /*if(yy.ctx[$$[$0-1]]) var param = yy.ctx[$$[$0-1]];*/
+        /*else throw new Error("ERROR: no value "+$$[$0-1]+" fonund in the context.");*/
         
-        this.$ = [param].concat($$[$0])
+        this.$ = [yy.llmd.newExpr($$[$0-1])].concat($$[$0])
       
 break;
 case 5:
@@ -133,61 +114,32 @@ case 7:
         if( $$[$0-6] != $$[$0-1] ) {
           throw new Error("blocks don't match");
         }
-        this.$ = { type: 'block', name: $$[$0-6], data: $$[$0-2], opt: $$[$0-5] };
+        this.$ = yy.llmd.newBlock( $$[$0-6], $$[$0-5], $$[$0-2] );
       
 break;
 case 8:
-      this.$ = { type:'pkg', name:$$[$0-4], opt:$$[$0-3], data: $$[$0-2] }; 
+      /*this.$ = { name:$$[$0-3], params:$$[$0-2] }; */
+      this.$ = yy.llmd.newPackage( $$[$0-3], $$[$0-2] );
+      
 break;
 case 9: this.$ = [$$[$0-4]+$$[$0-3]+$$[$0-2]+$$[$0-1]+($$[$01].length>0?$$[$0]:'')]; 
 break;
-case 10:
-        cleanMd = (function(arr){
-          var o = [];
-          var lastStr = "";
-          for(var i=0; i<arr.length; i++) {
-            if( typeof arr[i] == "string" )
-              lastStr += arr[i];
-            else {
-              if( lastStr != '' ) {
-                o.push(lastStr);
-                lastStr = '';
-              }
-              o.push(arr[i]);
-            }
-          }
-          if( lastStr != '' ) o.push(lastStr);
-          return o;
-        });
-      //this.$ = { md: cleanMd($$[$0]) }; }
-      this.$ = { md: $$[$0] }; 
+case 10:this.$ = { data: $$[$0] };
 break;
-case 11: this.$ = [$$[$0-2]].concat($$[$0]); 
+case 11:this.$ = yy.llmd.newExpr( $$[$0] );;
 break;
-case 12: this.$ = $$[$0]; 
+case 12:this.$ = $$[$0];
 break;
-case 13: this.$ = []; 
+case 13:this.$ = $$[$0];
 break;
-case 14: this.$ = $$[$0-1] + $$[$0]; 
+case 14: this.$ = $$[$0-2]+$$[$0-1]+$$[$0]; 
 break;
-case 15: this.$ = $$[$0]; 
-break;
-case 16: this.$ = $$[$0-3]+$$[$0-2]+$$[$0-1]+$$[$0]; 
-break;
-case 17: this.$ = $$[$0-1] + $$[$0]; 
-break;
-case 18: this.$ = $$[$0-1] + $$[$0]; 
-break;
-case 19: this.$ = ''; 
-break;
-case 20: this.$ = $$[$0-2]+$$[$0-1]+$$[$0]; 
-break;
-case 22: this.$ = ''; 
+case 16: this.$ = ''; 
 break;
 }
 },
-table: [{3:1,4:2,5:[2,3],6:3,10:[1,4],15:[1,5],18:[1,9],19:[1,6],22:7,23:[1,8]},{1:[3]},{5:[1,10]},{4:11,5:[2,3],6:3,10:[1,4],15:[1,5],18:[1,9],19:[1,6],22:7,23:[1,8]},{7:12,8:[1,13],9:[1,14],11:[2,6]},{5:[2,6],7:15,8:[1,13],9:[1,14],17:[2,6],18:[2,6],24:[2,6],26:[2,6]},{5:[1,18],12:16,18:[1,17]},{5:[2,10],10:[2,10],15:[2,10],18:[2,10],19:[2,10],23:[2,10]},{18:[1,19]},{5:[2,15],10:[2,15],15:[2,15],18:[2,15],19:[2,15],23:[2,15]},{1:[2,1]},{5:[2,2]},{11:[1,20]},{5:[2,6],7:21,8:[1,13],9:[1,14],11:[2,6],17:[2,6],18:[2,6],24:[2,6],26:[2,6]},{5:[2,6],7:22,8:[1,13],9:[1,14],11:[2,6],17:[2,6],18:[2,6],24:[2,6],26:[2,6]},{5:[1,18],12:25,16:23,17:[2,19],18:[1,17],24:[1,24],26:[1,26]},{5:[1,18],12:29,18:[1,17],20:27,21:[2,22],27:[1,28]},{5:[2,23],10:[2,23],14:[2,23],15:[2,23],17:[2,23],18:[2,23],19:[2,23],21:[2,23],23:[2,23],24:[2,23],25:[2,23],26:[2,23],27:[2,23]},{5:[2,24],10:[2,24],14:[2,24],15:[2,24],17:[2,24],18:[2,24],19:[2,24],21:[2,24],23:[2,24],24:[2,24],25:[2,24],26:[2,24],27:[2,24]},{5:[2,14],10:[2,14],15:[2,14],18:[2,14],19:[2,14],23:[2,14]},{5:[1,18],12:30,18:[1,17]},{5:[2,4],11:[2,4],17:[2,4],18:[2,4],24:[2,4],26:[2,4]},{5:[2,5],11:[2,5],17:[2,5],18:[2,5],24:[2,5],26:[2,5]},{17:[1,31]},{5:[1,18],12:25,16:32,18:[1,17],24:[1,24],25:[2,19],26:[1,26]},{5:[1,18],12:25,16:33,17:[2,19],18:[1,17],24:[1,24],25:[2,19],26:[1,26]},{5:[1,18],12:25,16:34,17:[2,19],18:[1,17],24:[1,24],25:[2,19],26:[1,26]},{21:[1,35]},{5:[1,18],12:36,18:[1,17]},{5:[1,18],12:29,18:[1,17],20:37,21:[2,22],27:[1,28]},{5:[1,18],12:40,13:38,14:[2,13],18:[1,17],23:[1,39]},{18:[1,41]},{25:[1,42]},{17:[2,17],25:[2,17]},{17:[2,18],25:[2,18]},{5:[1,18],12:43,18:[1,17]},{5:[1,18],12:29,18:[1,17],20:44,21:[2,22],27:[1,28]},{21:[2,21]},{14:[1,45]},{5:[1,18],12:46,18:[1,17]},{5:[1,18],12:40,13:47,14:[2,13],18:[1,17],23:[1,39]},{5:[2,8],10:[2,8],15:[2,8],18:[2,8],19:[2,8],23:[2,8]},{5:[1,18],12:25,16:48,17:[2,19],18:[1,17],24:[1,24],25:[2,19],26:[1,26]},{5:[2,9],10:[2,9],15:[2,9],18:[2,9],19:[2,9],23:[2,9]},{21:[2,20]},{5:[1,18],12:49,18:[1,17]},{5:[1,18],12:40,13:50,14:[2,13],18:[1,17],23:[1,39]},{14:[2,12]},{17:[2,16],25:[2,16]},{5:[2,7],10:[2,7],15:[2,7],18:[2,7],19:[2,7],23:[2,7]},{14:[2,11]}],
-defaultActions: {10:[2,1],11:[2,2],37:[2,21],44:[2,20],47:[2,12],50:[2,11]},
+table: [{3:1,4:2,5:[2,3],6:3,10:[1,4],14:[1,5],16:[1,10],17:[1,6],20:7,21:[1,8],22:[1,9]},{1:[3]},{5:[1,11]},{4:12,5:[2,3],6:3,10:[1,4],13:[2,3],14:[1,5],16:[1,10],17:[1,6],20:7,21:[1,8],22:[1,9]},{7:13,8:[1,14],9:[1,15],11:[2,6]},{7:16,8:[1,14],9:[1,15],15:[2,6]},{5:[1,19],12:17,16:[1,18]},{5:[2,10],10:[2,10],13:[2,10],14:[2,10],16:[2,10],17:[2,10],21:[2,10],22:[2,10]},{5:[2,11],10:[2,11],13:[2,11],14:[2,11],16:[2,11],17:[2,11],21:[2,11],22:[2,11]},{5:[2,12],10:[2,12],13:[2,12],14:[2,12],16:[2,12],17:[2,12],21:[2,12],22:[2,12]},{5:[2,13],10:[2,13],13:[2,13],14:[2,13],16:[2,13],17:[2,13],21:[2,13],22:[2,13]},{1:[2,1]},{5:[2,2],13:[2,2]},{11:[1,20]},{7:21,8:[1,14],9:[1,15],11:[2,6],15:[2,6]},{7:22,8:[1,14],9:[1,15],11:[2,6],15:[2,6]},{15:[1,23]},{5:[1,19],12:26,16:[1,18],18:24,19:[2,16],23:[1,25]},{5:[2,17],10:[2,17],13:[2,17],14:[2,17],16:[2,17],17:[2,17],19:[2,17],21:[2,17],22:[2,17],23:[2,17]},{5:[2,18],10:[2,18],13:[2,18],14:[2,18],16:[2,18],17:[2,18],19:[2,18],21:[2,18],22:[2,18],23:[2,18]},{5:[1,19],12:27,16:[1,18]},{11:[2,4],15:[2,4]},{11:[2,5],15:[2,5]},{16:[1,28]},{19:[1,29]},{5:[1,19],12:30,16:[1,18]},{5:[1,19],12:26,16:[1,18],18:31,19:[2,16],23:[1,25]},{4:32,6:3,10:[1,4],13:[2,3],14:[1,5],16:[1,10],17:[1,6],20:7,21:[1,8],22:[1,9]},{5:[2,8],10:[2,8],13:[2,8],14:[2,8],16:[2,8],17:[2,8],21:[2,8],22:[2,8]},{5:[1,19],12:33,16:[1,18]},{5:[1,19],12:26,16:[1,18],18:34,19:[2,16],23:[1,25]},{19:[2,15]},{13:[1,35]},{5:[2,9],10:[2,9],13:[2,9],14:[2,9],16:[2,9],17:[2,9],21:[2,9],22:[2,9]},{19:[2,14]},{5:[1,19],12:36,16:[1,18]},{5:[2,7],10:[2,7],13:[2,7],14:[2,7],16:[2,7],17:[2,7],21:[2,7],22:[2,7]}],
+defaultActions: {11:[2,1],31:[2,15],34:[2,14]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -653,51 +605,56 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 
   DEBUG = true;
+  
+  
+
 
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
 case 0:return 5
 break;
-case 1:return 18
+case 1:return 16
 break;
-case 2: this.begin('code'); return 19; 
+case 2: yy_.yytext = this.matches[1];return 21; 
 break;
-case 3: this.popState(); return 21; 
+case 3: this.begin('code'); return 17; 
 break;
-case 4: return 27; 
+case 4: this.popState(); return 19; 
 break;
-case 5: this.begin('package'); yy_.yytext = this.matches[1]; return 15 
+case 5: return 23; 
 break;
-case 6: this.popState(); return 17; 
+case 6: this.begin('package'); yy_.yytext = this.matches[1]; return 14 
 break;
-case 7: this.begin('packagecontent'); return 24;  
+case 7: this.popState(); return 15; 
 break;
-case 8: this.popState(); return 25; 
+case 8: this.begin('packagecontent'); return 'BRACE_OPEN';  
 break;
-case 9: return 26; 
+case 9: this.popState(); return 'BRACE_CLOSE'; 
 break;
-case 10: yy_.yytext = this.matches[1]; return 9; 
+case 10: return 'PACKAGELINE'; 
 break;
 case 11: yy_.yytext = this.matches[1]; return 9; 
 break;
-case 12: yy_.yytext = this.matches[1]; return 8; 
+case 12: yy_.yytext = this.matches[1]; return 9; 
 break;
-case 13: this.begin('blockDef'); yy_.yytext = this.matches[1]; return 10 
+case 13: yy_.yytext = this.matches[1]; return 8; 
 break;
-case 14:/* ignore whitespace in definition */
+case 14: this.begin('blockDef'); yy_.yytext = this.matches[1]; return 10 
 break;
-case 15: this.popState(); this.begin('block'); return 11; 
+case 15:/* ignore whitespace in definition */
 break;
-case 16: this.popState(); yy_.yytext = this.matches[1]; return 14; 
+case 16: this.popState(); this.begin('block'); return 11; 
 break;
-case 17:return 23
+case 17: this.popState(); yy_.yytext = this.matches[1]; return 13; 
 break;
-case 18:return 'INVALID'
+case 18:return 22
+break;
+case 19:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:$)/,/^(?:(\r\n|\r|\n))/,/^(?:```([^\r\n])*)/,/^(?:```([^\r\n])*)/,/^(?:([^\r\n])*)/,/^(?:\{\{>\s*(\w+))/,/^(?:\s*\}\})/,/^(?:(((\r\n|\r|\n)*([\t ])*)*)*\{)/,/^(?:(((\r\n|\r|\n)*([\t ])*)*)\}(((\r\n|\r|\n)*([\t ])*)*))/,/^(?:[^{}]*)/,/^(?:\s*'(.*)')/,/^(?:\s*"(.*)")/,/^(?:\s*([\w]+))/,/^(?:\{\{#\s*([\w\?]+))/,/^(?:\s+)/,/^(?:\}\}([^\r\n])*)/,/^(?:\{\{\/([\w\?]+)\}\}([^\r\n])*)/,/^(?:([^\r\n])*)/,/^(?:.)/],
-conditions: {"packagecontent":{"rules":[0,1,7,8,9,17],"inclusive":false},"packagename":{"rules":[0,1,17],"inclusive":false},"package":{"rules":[0,1,6,7,10,11,12,17],"inclusive":false},"blockDef":{"rules":[0,1,10,11,12,14,15,17],"inclusive":false},"block":{"rules":[0,1,16,17],"inclusive":false},"code":{"rules":[0,1,3,4,17],"inclusive":false},"INITIAL":{"rules":[0,1,2,5,13,17,18],"inclusive":true}}
+rules: [/^(?:$)/,/^(?:(\r\n|\r|\n))/,/^(?:\{\{\s*([\w\.]+)\s*\}\})/,/^(?:```([^\r\n{])*)/,/^(?:```([^\r\n{])*)/,/^(?:([^\r\n{])*)/,/^(?:\{\{>\s*(\w+))/,/^(?:\s*\}\})/,/^(?:(((\r\n|\r|\n)*([\t ])*)*)*\{)/,/^(?:(((\r\n|\r|\n)*([\t ])*)*)\}(((\r\n|\r|\n)*([\t ])*)*))/,/^(?:[^{}]*)/,/^(?:\s*'(.*)')/,/^(?:\s*"(.*)")/,/^(?:\s*([\w\.]+))/,/^(?:\{\{#\s*([\w\?]+))/,/^(?:\s+)/,/^(?:\}\}([^\r\n{])*)/,/^(?:\{\{\/([\w\?]+)\}\}([^\r\n{])*)/,/^(?:([^\r\n{])*(\r\n|\r|\n)?)/,/^(?:.)/],
+conditions: {"packagecontent":{"rules":[0,1,8,9,10,18],"inclusive":false},"packagename":{"rules":[0,1,18],"inclusive":false},"package":{"rules":[0,1,7,8,11,12,13,18],"inclusive":false},"blockDef":{"rules":[0,1,11,12,13,15,16,18],"inclusive":false},"block":{"rules":[0,1,2,3,6,14,17,18],"inclusive":false},"code":{"rules":[0,1,4,5,18],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,6,14,18,19],"inclusive":true}}
 };
 return lexer;
 })();

@@ -53,7 +53,7 @@ BL                    ({EOL}*{WS}*)*
 
 <package,blockDef>\s*\'(.*)\'              { yytext = this.matches[1]; return 'STRING'; }             
 <package,blockDef>\s*\"(.*)\"              { yytext = this.matches[1]; return 'STRING'; }             
-<package,blockDef>\s*([\w]+)               { yytext = this.matches[1]; return 'VAR'; }             
+<package,blockDef>\s*([\w\.]+)               { yytext = this.matches[1]; return 'VAR'; }             
 
 
 
