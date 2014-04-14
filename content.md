@@ -1,1 +1,5 @@
-{{> include asd}}
+{{#if c}}
+true
+{{else}}
+false
+{{/if}}
