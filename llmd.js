@@ -4,6 +4,23 @@ LLMD = function() {
 
 LLMD.packageTypes = {};
 
+LLMD.Atom = function( name ){
+  
+  this.name = name;
+  LLMD.packageTypes[name].init.apply(this);
+  this.meta = {
+    state: 'ready'
+  };
+  
+}
+
+LLMD.Type = function( name ){
+  return LLMD.packageTypes[ name ];
+}
+
+LLMD.Package = function( name ){
+  return LLMD.packageTypes[ name ];
+}
  
 // registers a new package
 LLMD.registerPackage = function( name, o ){
@@ -118,15 +135,15 @@ LLMD.prototype.newBlock = function( name, params, data ) {
   return node;
 }
 
-LLMD.prototype.newPackage = function( name, params ){
-  var type;
-  
-  if( LLMD.packageTypes[name] ) {
-    type = LLMD.packageTypes[name];
-  }
-  
-  return new LLMD.Package( type, name, params );
-}
+// LLMD.prototype.newPackage = function( name, params ){
+//   var type;
+//   
+//   if( LLMD.packageTypes[name] ) {
+//     type = LLMD.packageTypes[name];
+//   }
+//   
+//   return new LLMD.Package( type, name, params );
+// }
 
 LLMD.prototype.newExpr = function( key ){
   return new LLMD.Expr( key );
@@ -145,14 +162,14 @@ LLMD.Block = function( type, name, params, data ){
 }
 
 // example data filter for if
-LLMD.Package = function( type, name, data ) {
-  this.name = name;
-  data = prefilterData.apply( this, [data] );
-  
-  if(type && type.dataFilter && (filteredData = type.dataFilter.apply( this, [data] ))) this.data = filteredData;
-  else if(!type || !type.dataFilter) this.data=data;
-  
-}
+// LLMD.Package = function( type, name, data ) {
+//   this.name = name;
+//   data = prefilterData.apply( this, [data] );
+//   
+//   if(type && type.dataFilter && (filteredData = type.dataFilter.apply( this, [data] ))) this.data = filteredData;
+//   else if(!type || !type.dataFilter) this.data=data;
+//   
+// }
 
 LLMD.Expr = function( key ){
   this.name = 'expr';
