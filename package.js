@@ -1,13 +1,11 @@
 Package.describe({
-  summary: "LiquidLearning Markdown AST Parser"
+  summary: "LiquidLearning Core Package"
 });
 
 Package.on_use(function (api) {
-  api.add_files("lib/llmd.js", ["client","server"]);
-  api.add_files("llmdParser.js", ["client","server"]);
+  api.add_files("llmd.js", ["client","server"]);
 
   if (api.export) {
-    api.export('LlmdParser');
     api.export('LLMD');
   }
   
