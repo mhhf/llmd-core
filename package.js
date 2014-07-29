@@ -6,6 +6,8 @@ Package.on_use(function (api) {
   
   api.use('templating','client');
   api.use('less','client');
+  api.use('crypto-base',['client','server']);
+  api.use('crypto-sha1',['client','server']);
   
   api.add_files("llmd.js", ["client","server"]);
   

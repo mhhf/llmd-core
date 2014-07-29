@@ -2,8 +2,10 @@ LLMD.registerPackage("if", {
   init: function() {
     this.name = 'if';
     this.c = 'true';
-    this.t = Atoms.insert( new LLMD.Atom('seq') );
-    this.f = Atoms.insert( new LLMD.Atom('seq') );
+    this.t = [];
+    this.f = [];
+    // this.t = Atoms.insert( new LLMD.Atom('seq') );
+    // this.f = Atoms.insert( new LLMD.Atom('seq') );
   },
   nested:['t','f'],
   dataFilter: function( params, rawData ){
@@ -66,6 +68,7 @@ var cleanBlocks = function( bs ){
 
 
 LLMD.registerPackage('seq', {
+  nested: ['data'],
   init: function(){
     this.data = [];
   }

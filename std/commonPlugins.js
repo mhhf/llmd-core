@@ -35,16 +35,12 @@ Template.llmd_if_edit.rendered = function(){
 }
 
 Template.llmd_if_body.helpers({
-  getTrue: function(){
-    return {
-      atom: Atoms.findOne({ _id: this.atom.t }), 
-      parents: this.parents.concat([ this.atom._id ])
-    };
-  },
-  getFalse: function(){
-    return {
-      atom:Atoms.findOne({ _id: this.atom.f }),
-      parents: this.parents.concat([ this.atom._id ])
+  wrapData: function( d,a ){
+    return { 
+      atom: {
+        data: d
+      },
+      editorModel: this.editorModel
     };
   }
 });
@@ -65,17 +61,39 @@ Template.llmd_seq_edit.rendered = function(){
 
 Template.llmd_seq_edit.helpers({
   getData: function( ctx ){
-    // console.log('ctx',ctx);
-    return {
-      atom: this,
-      index: ctx.atom.data.indexOf(this._id),
-      parents: ctx.parents.concat([ ctx.atom._id ])
-    }
+    // console.#log('ctx',ctx);
+    var wrappedAtom = ctx.editorModel.wrapAtom( this, ctx.parents.concat([ ctx.atom._id ]) ); 
+    return wrappedAtom;
+    
+    // return {
+    //   atom: this,
+    //   index: ctx.atom.data.indexOf(this._id),
+    //   parents: ,
+    //   commit: ctx.commit,
+    //   editor: ctx.editor
+    // }
   },
   isComment: function(){
     return this.name === 'comment';
   },
+  atoms: function(){
+    // var atoms = _.map( this.atom.data, function(_id,a){
+    //   var atom = Atoms.findOne({_id: _id});
+    //   return atom;
+    // });
+    // 
+    console.log(this);
+    if( !this.key ) return this.get().data;
+    return this.get()[this.key];
+  }
+})
+
+Template.llmd_nested.helpers({
+  atoms: function(){
+    return this.atom.getNested(this.key);
+  },
   getWrapper: function(){
+    console.log('n',this);
     if( this.atom.name === 'comment') {
       return Template['commentWrapper'];
     } else if( this.atom.name === 'seq' ) {
@@ -86,8 +104,6 @@ Template.llmd_seq_edit.helpers({
         console.log('merge', this.atom);
         return Template['atomWrapper'];
       }
-    } else if( this.atom.name === 'if' && false ) {
-      return Template['ifWrapper'];
     } else {
       if( this.atom.meta && this.atom.meta.state == 'conflict' && !LLMD.Package( this.atom.name ).nested ) {
         if( this.atom.meta.diff.type == 'remove') {
@@ -102,12 +118,4 @@ Template.llmd_seq_edit.helpers({
       }
     }
   },
-  atoms: function(){
-    var atoms = _.map( this.atom.data, function(_id,a){
-      var atom = Atoms.findOne({_id: _id});
-      return atom;
-    });
-    return atoms;
-  }
-})
-
+});

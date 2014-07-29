@@ -1,3 +1,4 @@
+console.log('loading');
 LLMD = function() {
   this.currentNode = null;
 }
@@ -7,10 +8,17 @@ LLMD.packageTypes = {};
 LLMD.Atom = function( name ){
   
   this.name = name;
+  
   LLMD.packageTypes[name].init.apply(this);
+  
   this.meta = {
-    state: 'ready'
+    state: 'init',
+    active: true,
+    lock: false
   };
+  
+  this._seedId = CryptoJS.SHA1(Math.random()+''+Math.random()).toString();
+  
   
 }
 
@@ -32,6 +40,16 @@ LLMD.hasPreprocess = function( ast ){
 }
 LLMD.hasNested = function( ast ){
   return ( ast.name && LLMD.packageTypes[ast.name] && !!LLMD.packageTypes[ast.name].nested );
+}
+
+LLMD.eachNested = function( atom, f ){
+  
+  var nested = LLMD.packageTypes[atom.name].nested;
+  
+  for( var i in nested ) {
+    f( atom[nested[i]], nested[i] );
+  }
+  
 }
 
 LLMD.applyNested = function( ast, f, cb ){
@@ -149,17 +167,17 @@ LLMD.prototype.newExpr = function( key ){
   return new LLMD.Expr( key );
 }
 
-LLMD.Block = function( type, name, params, data ){
-  this.name = name;
-  // if the Blocktype has a Data Filter, do the filter, otherwise return the piain data
-  var filteredData;
-  params = prefilterData.apply( this, [params] );
-  
-  if(type && type.dataFilter && (filteredData = type.dataFilter.apply( this, [params, data] ))) this.data = filteredData;
-  else if(!type || !type.dataFilter) this.data=data;
-  
-  return this;
-}
+// LLMD.Block = function( type, name, params, data ){
+//   this.name = name;
+//   // if the Blocktype has a Data Filter, do the filter, otherwise return the piain data
+//   var filteredData;
+//   params = prefilterData.apply( this, [params] );
+//   
+//   if(type && type.dataFilter && (filteredData = type.dataFilter.apply( this, [params, data] ))) this.data = filteredData;
+//   else if(!type || !type.dataFilter) this.data=data;
+//   
+//   return this;
+// }
 
 // example data filter for if
 // LLMD.Package = function( type, name, data ) {

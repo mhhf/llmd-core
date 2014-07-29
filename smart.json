@@ -6,5 +6,7 @@
 	"author": "Denis Erfurt <denis.erfurt@gmail.com>",
   "git": "git@bitbucket.org:liquidlearningdev/slideparser.git",
   "packages": {
+    "crypto-base":{},
+    "crypto-sha1":{}
   }
 }
