@@ -1,4 +1,3 @@
-console.log('loading');
 LLMD = function() {
   this.currentNode = null;
 }
@@ -7,18 +6,43 @@ LLMD.packageTypes = {};
 
 LLMD.Atom = function( name ){
   
-  this.name = name;
+  // this.name = name;
+  // 
+  // LLMD.packageTypes[name].init.apply(this);
+  // 
+  // this.meta = {
+  //   state: 'init',
+  //   active: true,
+  //   lock: false
+  // };
   
-  LLMD.packageTypes[name].init.apply(this);
+  var S = new SimpleSchema(
+      LLMD.packageTypes[name].shema.concat({
+        name: {
+          type: String
+        },
+        meta: {
+          type: Object
+        },
+        'meta.state': {
+          type: String,
+          defaultValue: 'init'
+        },
+        'meta.active': {
+          type: Boolean,
+          defaultValue: true
+        },
+        'meta.lock': {
+          type: Boolean,
+          defaultValue: false
+        },
+        _seedId: {
+          type: String,
+          defaultValue: CryptoJS.SHA1(Math.random()+''+Math.random()).toString()
+        }
+      }));
   
-  this.meta = {
-    state: 'init',
-    active: true,
-    lock: false
-  };
-  
-  this._seedId = CryptoJS.SHA1(Math.random()+''+Math.random()).toString();
-  
+  _.extend(this, S.clean({ name: name }));
   
 }
 
