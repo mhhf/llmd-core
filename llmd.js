@@ -4,17 +4,7 @@ LLMD = function() {
 
 LLMD.packageTypes = {};
 
-LLMD.Atom = function( name ){
-  
-  // this.name = name;
-  // 
-  // LLMD.packageTypes[name].init.apply(this);
-  // 
-  // this.meta = {
-  //   state: 'init',
-  //   active: true,
-  //   lock: false
-  // };
+LLMD.Atom = function( name, parent ){
   
   var S = new SimpleSchema(
       LLMD.packageTypes[name].shema.concat({
@@ -36,6 +26,10 @@ LLMD.Atom = function( name ){
           type: Boolean,
           defaultValue: false
         },
+        _rights: {
+          type: String,
+          defaultValue: 'public'
+        },
         _seedId: {
           type: String,
           defaultValue: CryptoJS.SHA1(Math.random()+''+Math.random()).toString()
@@ -43,6 +37,10 @@ LLMD.Atom = function( name ){
       }));
   
   _.extend(this, S.clean({ name: name }));
+  
+  if( parent ) {
+    this._rights = parent._rights;
+  }
   
 }
 
@@ -260,3 +258,41 @@ var cleanBlocks = function( bs ){
   }
   return blocks;
 }
+
+
+// [TODO] - refactor user to owner, upvotes to pro/con
+LLMD.AtomSchema = {
+  owner: {
+    type: Object
+  },
+  "owner.name": {
+    type: String,
+    autoValue: function(){
+      return Meteor.user().profile.name;
+    }
+  },
+  "owner._id": {
+    type: String,
+    autoValue: function(){
+      return Meteor.userId();
+    }
+  },
+  updatedOn: {
+    type: Date,
+    autoValue: function(){
+      return new Date();
+    }
+  },
+  upvotes: {
+    type: [String],
+    defaultValue: []
+  },
+  downvotes: {
+    type: [String],
+    defaultValue: [] 
+  },
+  score: {
+    type: Number,
+    defaultValue: 0
+  },
+};
