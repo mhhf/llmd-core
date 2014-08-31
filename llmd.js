@@ -260,7 +260,6 @@ var cleanBlocks = function( bs ){
 }
 
 
-// [TODO] - refactor user to owner, upvotes to pro/con
 LLMD.AtomSchema = {
   owner: {
     type: Object
@@ -283,11 +282,11 @@ LLMD.AtomSchema = {
       return new Date();
     }
   },
-  upvotes: {
+  pro: {
     type: [String],
     defaultValue: []
   },
-  downvotes: {
+  con: {
     type: [String],
     defaultValue: [] 
   },
