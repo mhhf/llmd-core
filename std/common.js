@@ -68,10 +68,53 @@ var cleanBlocks = function( bs ){
 
 
 LLMD.registerPackage('seq', {
-  nested: ['data'],
-  init: function(){
-    this.data = [];
-  }
+  shema: [
+    LLMD.AtomSchema,
+    {
+      data: {
+        type: [Object],
+        defaultValue: []
+      },
+      'data.$': {
+        type: Object,
+        blackbox: true
+      }
+    }
+  ],
+  nested: ['data']
+});
+
+
+LLMD.registerPackage('string', {
+  shema: [
+    LLMD.AtomSchema,
+    {
+      value: {
+        type: String,
+        defaultValue: ''
+      }
+    }
+  ]
+});
+
+// has value to be nested
+LLMD.registerPackage('name', {
+  shema: [
+    LLMD.AtomSchema,
+    {
+      key: {
+        type: String,
+        defaultValue: ''
+      }
+    },
+    {
+      value: {
+        type: Object,
+        blackbox: true
+      }
+    }
+  ],
+  nested: ['value']
 });
 
 // LLMD.registerPackage('diff', {
